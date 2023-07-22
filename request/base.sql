@@ -9,19 +9,23 @@ SELECT DISTINCT
        price*plan_cnt AS income_plan,
        ROUND((price*(SUM(sales_cnt) OVER (PARTITION BY product_name)))/(price*plan_cnt), 2) AS "income_fact/income_plan"
 FROM (
-	SELECT product_name, 
-		   shop_name, 
-		   price, 
-           plan.shop_id, 
-           shop_dns.product_id, 
-           sales_cnt, 
-           plan_cnt  
+	SELECT EXTRACT (MONTH FROM date) AS month,
+              (SELECT EXTRACT (MONTH from current_date) - 1) AS last_month, 
+              (SELECT EXTRACT (MONTH FROM plan_date)) AS month_plan, 
+              product_name, 
+		shop_name, 
+		price, 
+              plan.shop_id, 
+              shop_dns.product_id, 
+              sales_cnt, 
+              plan_cnt  
     FROM 
     	shop_dns INNER JOIN products on products.product_id = shop_dns.product_id
                  INNER JOIN plan on plan.product_id = shop_dns.product_id
                  INNER JOIN shop on shop.shop_id = plan.shop_id
            WHERE plan.shop_id = 1 
     ORDER BY product_id) AS dns
+WHERE month = last_month AND last_month = month_plan
 UNION ALL
 -- shop_mvideo
 SELECT DISTINCT 
@@ -34,20 +38,25 @@ SELECT DISTINCT
        price*plan_cnt AS income_plan,
        ROUND((price*(SUM(sales_cnt) OVER (PARTITION BY product_name)))/(price*plan_cnt), 2) AS "income_fact/income_plan"
 FROM (
-	SELECT product_name, 
-		   shop_name, 
-		   price, 
-           plan.shop_id, 
-           shop_mvideo.product_id, 
-           sales_cnt, 
-           plan_cnt  
+	SELECT EXTRACT (MONTH FROM date) AS month,
+              (SELECT EXTRACT (MONTH from current_date) - 1) AS last_month, 
+              (SELECT EXTRACT (MONTH FROM plan_date)) AS month_plan, 
+              product_name,
+              shop_name, 
+              price, 
+              plan.shop_id, 
+              shop_mvideo.product_id, 
+              sales_cnt, 
+              plan_cnt  
     FROM 
     	shop_mvideo INNER JOIN products on products.product_id = shop_mvideo.product_id
                  INNER JOIN plan on plan.product_id = shop_mvideo.product_id
                  INNER JOIN shop on shop.shop_id = plan.shop_id
            WHERE plan.shop_id = 2 
     ORDER BY product_id) AS mvideo
+WHERE month = last_month AND last_month = month_plan
 UNION ALL
+
 -- shom_sitilink
 SELECT DISTINCT 
 	   shop_name, 
@@ -59,16 +68,20 @@ SELECT DISTINCT
        price*plan_cnt AS income_plan,
        ROUND((price*(SUM(sales_cnt) OVER (PARTITION BY product_name)))/(price*plan_cnt), 2) AS "income_fact/income_plan"
 FROM (
-	SELECT product_name, 
-		   shop_name, 
-		   price, 
-           plan.shop_id, 
-           shop_sitilink.product_id, 
-           sales_cnt, 
-           plan_cnt  
+	SELECT EXTRACT (MONTH FROM date) AS month,
+              (SELECT EXTRACT (MONTH from current_date) - 1) AS last_month, 
+              (SELECT EXTRACT (MONTH FROM plan_date)) AS month_plan, 
+              product_name, 
+		shop_name, 
+		price, 
+              plan.shop_id, 
+              shop_sitilink.product_id, 
+              sales_cnt, 
+              plan_cnt  
     FROM 
     	shop_sitilink INNER JOIN products on products.product_id = shop_sitilink.product_id
                  INNER JOIN plan on plan.product_id = shop_sitilink.product_id
                  INNER JOIN shop on shop.shop_id = plan.shop_id
            WHERE plan.shop_id = 3 
     ORDER BY product_id) AS sitilink
+WHERE month = last_month AND last_month = month_plan
